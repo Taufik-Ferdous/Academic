@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Elements Demonstration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: darkblue;
+        }
+        .highlight {
+            color: red;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Header -->
+    <h1>Welcome to the HTML Elements Demo</h1>
+    <p>This webpage demonstrates various HTML elements.</p>
+
+    <!-- Quotation -->
+    <blockquote>
+        "The best way to predict the future is to invent it." - Alan Kay
+    </blockquote>
+
+    <!-- Image and Link -->
+    <p>Here is an image of a beautiful scenery:</p>
+    <a href="https://www.example.com" target="_blank">
+        <img src="https://via.placeholder.com/400x200" alt="Beautiful Scenery" style="width:400px; height:200px;">
+    </a>
+    <p>Click the image to visit the source website.</p>
+
+    <!-- Ordered and Unordered Lists -->
+    <h2>Lists Example</h2>
+    <p>Here is an ordered list of top programming languages:</p>
+    <ol>
+        <li>Python</li>
+        <li>JavaScript</li>
+        <li>Java</li>
+        <li>C++</li>
+        <li>C#</li>
+    </ol>
+
+    <p>Here is an unordered list of web development tools:</p>
+    <ul>
+        <li>Visual Studio Code</li>
+        <li>Git</li>
+        <li>Node.js</li>
+        <li>Webpack</li>
+    </ul>
+
+    <!-- Table with Row Span and Col Span -->
+    <h2>Table Example</h2>
+    <table>
+        <tr>
+            <th>Category</th>
+            <th>Item</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td rowspan="2">Fruits</td>
+            <td>Apple</td>
+            <td>Sweet and crunchy</td>
+        </tr>
+        <tr>
+            <td>Banana</td>
+            <td>Soft and sweet</td>
+        </tr>
+        <tr>
+            <td>Vegetables</td>
+            <td colspan="2">A variety of healthy options</td>
+        </tr>
+    </table>
+
+    <!-- Comment Example -->
+    <!-- This is a comment and will not appear on the webpage -->
+
+    <p class="highlight">This text is highlighted in red using CSS styling.</p>
+</body>
+</html>

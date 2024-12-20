@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Elements and Attributes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: darkblue;">Heading 1</h1>
+    <h2 style="color: darkgreen;">Heading 2</h2>
+    <h3 style="color: darkred;">Heading 3</h3>
+    <h4 style="color: purple;">Heading 4</h4>
+    <h5 style="color: teal;">Heading 5</h5>
+    <h6 style="color: gray;">Heading 6</h6>
+
+    <p>This is a paragraph demonstrating different HTML elements and attributes.</p>
+    
+    <p>Here is a line break example:</p>
+    <p>First Line<br>Second Line</p>
+
+    <a href="https://www.example.com" target="_blank" style="color: blue; text-decoration: none;">Visit Example Website</a>
+
+    <p>Here is an image:</p>
+    <img src="https://via.placeholder.com/300x150" alt="Placeholder Image" style="width:300px; height:150px; border: 1px solid black;">
+
+    <p>Here is a <b>bold</b> text and a <strong>strong</strong> text.</p>
+
+    <p>Here is an <i>italic</i> text and an <em>emphasized</em> text.</p>
+
+    <p>This text has a <mark class="highlight">highlighted</mark> background.</p>
+
+    <p>This text is <small>smaller</small> than the regular text.</p>
+
+    <p>This text shows a <del>deleted</del> word and an <ins>inserted</ins> word.</p>
+
+    <p>Chemical formula for water: H<sub>2</sub>O</p>
+    <p>E = mc<sup>2</sup></p>
+
+    <pre>
+Preformatted text:
+  Line 1
+      Line 2
+  Line 3
+    </pre>
+</body>
+</html>

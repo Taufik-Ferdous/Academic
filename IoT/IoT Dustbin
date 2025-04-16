@@ -1,0 +1,196 @@
+//IoT Smart Dustbin
+//Modified by Lulu (Taufik)
+
+
+#include <ESP8266WiFi.h>
+#include <SoftwareSerial.h>
+#include <LiquidCrystal_I2C.h>
+#include <TinyGPS++.h>
+
+// === Pins ===
+const int trigPin = D6;
+const int echoPin = D5;
+const int led = D0;
+
+// === WiFi & IFTTT ===
+const char *ssid = ".";
+const char *password = "qwer1234";
+const char *host = "maker.ifttt.com";
+const char *privateKey = "hUAAAz0AVvc6-NW1UmqWXXv6VQWmpiGFxx3sV5rnaM9";
+WiFiServer server(80);
+
+// === LCD ===
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// === Serial Communication ===
+SoftwareSerial mySerial(D3, D4);       // SIM800L
+SoftwareSerial gpsSerial(D7, D8);      // GPS (TX to D7)
+
+// === GPS ===
+TinyGPSPlus gps;
+float latitude = 0.0, longitude = 0.0;
+
+// === Ultrasonic Variables ===
+long duration;
+int distance;
+float level;
+int previousLevel = -1;
+
+// === Alert Timer ===
+unsigned long lastAlert = 0;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(led, OUTPUT);
+
+  Serial.begin(9600);
+  mySerial.begin(9600);
+  gpsSerial.begin(9600);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Smart Dustbin");
+  lcd.setCursor(0, 1);
+  lcd.print("Initializing...");
+  delay(3000);
+  lcd.clear();
+
+  Serial.print("Connecting to WiFi: ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nConnected to WiFi.");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+  server.begin();
+  Serial.println("Server started");
+}
+
+void loop() {
+  // Reconnect WiFi if needed
+  if (WiFi.status() != WL_CONNECTED) {
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+    Serial.println("\nWiFi Reconnected.");
+  }
+
+  // Read GPS data
+  if (gpsSerial.available()) {
+    int data = gpsSerial.read();
+    if (gps.encode(data)) {
+      if (gps.location.isValid()) {
+        latitude = gps.location.lat();
+        longitude = gps.location.lng();
+      }
+    }
+  }
+
+  // Ultrasonic Sensor
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  level = (((25 - distance) / 25.0) * 100) + 28;
+  if (level > 100) level = 100;
+  if (level <= 0) level = 0;
+
+  // Show on LCD only if level changed significantly
+  if (abs(level - previousLevel) >= 1) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Smart Dustbin");
+    lcd.setCursor(0, 1);
+    lcd.print("Level: ");
+    lcd.print(level, 1);
+    lcd.print("%");
+    previousLevel = level;
+  }
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.print(" cm | Level: ");
+  Serial.print(level);
+  Serial.println("%");
+
+  digitalWrite(led, LOW);
+
+  // Trigger alert
+  if (level >= 80 && millis() - lastAlert > 30000) {
+    SendMessage();
+    digitalWrite(led, HIGH);
+    // send_event("jar_event");
+    lastAlert = millis();
+  }
+
+  delay(500);
+}
+
+// === IFTTT Event Trigger ===
+// void send_event(const char *event) {
+//   WiFiClient client;
+//   const int httpPort = 80;
+//   if (!client.connect(host, httpPort)) {
+//     Serial.println("IFTTT Connection failed");
+//     return;
+//   }
+
+//   String url = "/trigger/";
+//   url += event;
+//   url += "/with/key/";
+//   url += privateKey;
+
+//   client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+//                "Host: " + host + "\r\n" +
+//                "Connection: close\r\n\r\n");
+
+//   Serial.print("Requesting URL: ");
+//   Serial.println(url);
+
+//   while (client.connected()) {
+//     if (client.available()) {
+//       String line = client.readStringUntil('\r');
+//       Serial.print(line);
+//     }
+//   }
+//   Serial.println("\nIFTTT Triggered.");
+//   client.stop();
+// }
+
+// === SMS with GPS Location ===
+void SendMessage() {
+  Serial.println("Dustbin Full! Sending SMS...");
+  Serial.print("Location: https://maps.google.com/?q=");
+  Serial.print(latitude, 6);
+  Serial.print(",");
+  Serial.println(longitude, 6);
+
+  mySerial.println("AT+CMGF=1");
+  delay(1000);
+  mySerial.println("AT+CMGS=\"+8801794546104\"\r");
+  delay(1000);
+
+  mySerial.print("Dustbin is Full!\nLocation: ");
+  mySerial.print("https://maps.google.com/?q=");
+  mySerial.print(latitude, 6);
+  mySerial.print(",");
+  mySerial.print(longitude, 6);
+
+  delay(100);
+  mySerial.println((char)26); // Ctrl+Z to send
+  delay(5000);
+}

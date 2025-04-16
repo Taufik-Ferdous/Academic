@@ -1,6 +1,8 @@
 //IoT Smart Dustbin
 //Modified by Lulu (Taufik)
 
+// Pin Configurarion: https://github.com/Taufik-Ferdous/Academic/blob/a13d96dbadd97be5bc00aad2a5265646df98d0f7/IoT/IoT%20Smart%20Dustbin%20Pin%20Configuration.jpg
+
 
 #include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
